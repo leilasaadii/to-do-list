@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 36px;
+        }
+        #container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        #input {
+            padding: 10px;
+            width: 250px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        #add_btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #add_btn:hover {
+            background-color: #45a049;
+        }
+        ul#tasklist {
+            list-style-type: none;
+            padding: 0;
+            width: 300px;
+        }
+        li {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color 0.3s ease;
+        }
+        li:hover {
+            background-color: #f1f1f1;
+        }
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+        }
+        .task-text {
+            flex-grow: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        .done {
+            text-decoration: line-through;
+            color: #999;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #e53935;
+        }
+    </style>
+</head>
+<body>
+   <h1>add task</h1>
+   <div id="container">
+        <input type="text" id="input" placeholder="Enter your task">
+        <button id="add_btn">Add task</button>
+   </div>
+   <ul id="tasklist"></ul>
+   <script>
+    input.focus();
+        function taskManager(){
+            var arrayTask = [];
+           function addTask(value){
+                if(value.trim() === ""){
+                    alert("please enter your task");
+                    return;
+                }
+                if(value.trim().length <= 3){
+                    alert("task must be more than 3 characters");
+                    return;
+                }
+                arrayTask.push({
+                    text: value,
+                    id: new Date().getTime(),
+                    isDone: false
+                });
+                renderTask();
+            }
+
+            function removeTask(id){
+                for(var i = 0; i < arrayTask.length; i++){
+                    if(arrayTask[i].id === id){
+                        arrayTask.splice(i, 1);
+                        renderTask();
+                        break;
+                    }
+                }
+            }
+
+            function taskStatus(id){
+                var task = arrayTask.find(function(item){
+                    return item.id === id;
+                });
+                if(task){
+                    task.isDone = !task.isDone;
+                    renderTask();
+                }
+            }
+
+            function renderTask(){
+                var taskList = document.getElementById('tasklist');
+                taskList.innerHTML = "";
+                for (var i = 0; i < arrayTask.length; i++){
+                    var li = document.createElement('LI');
+                    var checkbox = document.createElement('INPUT');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = arrayTask[i].isDone;
+                    checkbox.addEventListener('click', taskStatus.bind(null, arrayTask[i].id));
+                    
+                    var taskText = document.createElement('SPAN');
+                    taskText.innerHTML = arrayTask[i].text;
+                    if(arrayTask[i].isDone){
+                        taskText.classList.add('done');
+                    }
+
+                    var deleteBtn = document.createElement('BUTTON');
+                    deleteBtn.innerHTML = "x";
+                    deleteBtn.addEventListener('click', removeTask.bind(null, arrayTask[i].id));
+
+                    li.appendChild(checkbox);
+                    li.appendChild(taskText);
+                    li.appendChild(deleteBtn);
+                    taskList.appendChild(li);
+                }
+           
+            }
+            return {
+                addTask,
+                removeTask,
+                taskStatus,
+                renderTask,
+            };
+                }
+
+        var creatTaskManager = taskManager();
+
+        document.getElementById('add_btn').addEventListener('click', function() {
+            var input = document.getElementById('input');
+            creatTaskManager.addTask(input.value);
+            input.value = ''; 
+            event.stopPropagation();
+        });
+
+        document.getElementById('input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                var input = document.getElementById('input');
+                creatTaskManager.addTask(input.value);
+                input.value = ''; 
+                event.stopPropagation();
+            }
+        });
+       </script>
+</body>
+</html>
